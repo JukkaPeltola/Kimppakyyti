@@ -25,3 +25,4 @@ C:\Code\Viikko11\Projekti\Kimppakyyti\kimppakyyti-api\KimppakyytiApi\Kimppakyyti
 C:\Code\Viikko11\Projekti\Kimppakyyti\kimppakyyti-api\KimppakyytiApi\KimppakyytiApi\obj\Debug\netcoreapp2.1\KimppakyytiApi.RazorTargetAssemblyInfo.cache
 C:\Code\Viikko11\Projekti\Kimppakyyti\kimppakyyti-api\KimppakyytiApi\KimppakyytiApi\obj\Debug\netcoreapp2.1\KimppakyytiApi.dll
 C:\Code\Viikko11\Projekti\Kimppakyyti\kimppakyyti-api\KimppakyytiApi\KimppakyytiApi\obj\Debug\netcoreapp2.1\KimppakyytiApi.pdb
+C:\Code\Viikko11\Projekti\Kimppakyyti\kimppakyyti-api\KimppakyytiApi\KimppakyytiApi\obj\Debug\netcoreapp2.1\KimppakyytiApi.csprojAssemblyReference.cache
