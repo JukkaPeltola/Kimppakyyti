@@ -72,13 +72,13 @@ namespace KimppakyytiApi.Controllers
             UriFactory.CreateDatabaseUri(_dbName),
             new DocumentCollection { Id = _collectionName });
         }
+        [HttpGet]
+        public string Ping()
+        {
+            return "Nyt on tehty collection, vaikka sitä ei oltu tehty aiemmin!";
+        }
         //[HttpGet]
-        //public string Ping()
-        //{
-        //    return "Nyt on tehty collection, vaikka sitä ei oltu tehty aiemmin!";
-        //}
-        //[HttpGet]
-        //public ActionResult<List<Ride>> SearchRidesByLocation()
+        //public ActionResult<List<Ride>> SearchRidesByLocation(string startlocation)
         //{
         //    try
         //    {
@@ -134,11 +134,21 @@ namespace KimppakyytiApi.Controllers
         [HttpGet]
         public async Task<ActionResult<List<RideOut>>> GetSearchRidesCustomerAsync(DateTime startTime, DateTime endTime, string startAddress, string targetAddress)
         {
+            
             try //Searching Rides from CosmosDB with right TimeTable.
             {
                 {
                     //Functions for delayed response -- timeout try /catch
+                    //if (targetAddress == "any")
+                    //{
+                    //    FeedOptions queryOptions = new FeedOptions { MaxItemCount = -1 };
+                    //    IQueryable<RideOut> query = _cosmosDBclient.CreateDocumentQuery<RideOut>(
+                    //    UriFactory.CreateDocumentCollectionUri(_dbName, _collectionName),
+                    //    $"SELECT * FROM C WHERE C.StartAddress = {startAddress} ",
+                    //    queryOptions);
 
+                    //    return Ok(query.ToList());
+                    //}
                     // Get route from Google Directions Api
                     var response = await GoogleApiFunctions.GetRouteGoogle(startAddress, targetAddress);
 
@@ -190,7 +200,15 @@ namespace KimppakyytiApi.Controllers
                         foreach (var item in incomingRides)
                         {
                             bool startPointMatch = false;
-                            bool targetPointMatch = false;
+                            bool targetPointMatch;
+                            if (targetAddress == "any")
+                            {
+                                targetPointMatch = true;
+                            }
+                            else
+                            {
+                                targetPointMatch = false;
+                            }
                             try
                             {
                                 if (StaticFunctions.CalculateDistanceBetweenPoints(item.RoutePoints.Where(p => StaticFunctions.CalculateDistanceBetweenPoints(p, valueOut.StartLocation) < 501).First(), valueOut.StartLocation) < 501)
@@ -208,7 +226,7 @@ namespace KimppakyytiApi.Controllers
 
                             try
                             {
-                                if (StaticFunctions.CalculateDistanceBetweenPoints(item.RoutePoints.Where(p => StaticFunctions.CalculateDistanceBetweenPoints(p, valueOut.TargetLocation) < 501).First(), valueOut.TargetLocation) < 501) ;
+                                if (StaticFunctions.CalculateDistanceBetweenPoints(item.RoutePoints.Where(p => StaticFunctions.CalculateDistanceBetweenPoints(p, valueOut.TargetLocation) < 501).First(), valueOut.TargetLocation) < 501) 
                                 {
                                     targetPointMatch = true;
                                 }
@@ -254,6 +272,9 @@ namespace KimppakyytiApi.Controllers
             return BadRequest();
 
         }
+
+       
+      
 
         //[HttpPost]
         //public async Task<ActionResult<List<RideOut>>> SearchRidesCustomerAsync([FromBody]Ride valueIn)
@@ -341,29 +362,29 @@ namespace KimppakyytiApi.Controllers
         //     return BadRequest();
 
         // }
-        // [HttpGet]
-        // public ActionResult<List<Ride>> GetAllRides()
-        // {
-        //     try
-        //     {
-        //         FeedOptions queryOptions = new FeedOptions { MaxItemCount = -1 };
-        //         IQueryable<Ride> query = _cosmosDBclient.CreateDocumentQuery<Ride>(
-        //         UriFactory.CreateDocumentCollectionUri(_dbName, _collectionName),
-        //         $"SELECT * FROM C",
-        //         queryOptions);
+        [HttpGet]
+        public ActionResult<List<Ride>> GetAllRides()
+        {
+            try
+            {
+                FeedOptions queryOptions = new FeedOptions { MaxItemCount = -1 };
+                IQueryable<Ride> query = _cosmosDBclient.CreateDocumentQuery<Ride>(
+                UriFactory.CreateDocumentCollectionUri(_dbName, _collectionName),
+                $"SELECT * FROM C",
+                queryOptions);
 
-        //         return Ok(query.ToList());
-        //     }
-        //     catch (DocumentClientException de)
-        //     {
-        //         switch (de.StatusCode.Value)
-        //         {
-        //             case System.Net.HttpStatusCode.NotFound:
-        //                 return NotFound();
-        //         }
-        //     }
-        //     return BadRequest();
-        // }
+                return Ok(query.ToList());
+            }
+            catch (DocumentClientException de)
+            {
+                switch (de.StatusCode.Value)
+                {
+                    case System.Net.HttpStatusCode.NotFound:
+                        return NotFound();
+                }
+            }
+            return BadRequest();
+        }
 
         [HttpPost]
         public async Task<ActionResult<RideOut>> PostOfferRideAsync([FromBody] Ride valueIn)

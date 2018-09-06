@@ -9,12 +9,14 @@ import {
   CardBody,
   CardTitle
 } from "reactstrap";
+import '../App.css';
 import NicknameRides from "./NicknameRides";
 import { ListGroup, ListGroupItem } from "reactstrap";
 
 const urlGetNicknameRides =
-  "https://kimppakyytiapi.azurewebsites.net/api/ride/getallrides";
+  "https://lada.azurewebsites.net/api/ride/getallrides";
 var allRides = [];
+var passengerRides = [];
 
 class ProfileAuth extends Component {
   constructor(props) {
@@ -22,7 +24,8 @@ class ProfileAuth extends Component {
     this.state = {
       profile: {},
       phonenumber: "",
-      list: []
+      list: [],
+      passengerlist: []
     };
   }
 
@@ -30,9 +33,11 @@ class ProfileAuth extends Component {
     getProfile((err, profile) => {
       this.setState({ profile: profile });
       this.getNicknameRides();
+      this.getPassengerRides();
     });
   }
   getNicknameRides = callback => {
+
     fetch(urlGetNicknameRides)
       .then(result => result.json())
       .then(data => {
@@ -40,7 +45,24 @@ class ProfileAuth extends Component {
 
         this.setState({ list: allRides });
       });
+  }
+  getPassengerRides = callback => {
+
+    fetch(urlGetNicknameRides)
+      .then(result => result.json())
+      .then(data => {
+        // passengerRides = data.filter(x => !!x.onBoard.filter(o => o === this.state.profile.nickname).length);
+        passengerRides = data.filter(x => x.onBoard.indexOf(this.state.profile.nickname) > -1);
+        this.setState({ passengerlist: passengerRides });
+      });
+
+
   };
+  // getPassengerRides = callback => {
+  //   fetch(urlGetNicknameRides)
+  //     .then(result => result.json())
+  //     .then(data => )
+  // }
 
   deleteRideFromList = id => {
     var tempList = this.state.list.filter(x => x.id !== id);
@@ -48,12 +70,14 @@ class ProfileAuth extends Component {
     this.setState({ list: tempList });
   };
 
+
   render() {
     return (
+
       isLoggedIn() && (
-        <div>
-          <Row>
-            <Col sm="12" md={{ size: 6, offset: 6 }}>
+        <div className="profileContent">
+          <Row className="row justify-content-center">
+            <Col className="row justify-content-center">
               <Card>
                 <CardImg src={this.state.profile.picture} alt="profile" />
                 <CardBody>
@@ -62,11 +86,13 @@ class ProfileAuth extends Component {
                     <ListGroup>
                       <ListGroupItem>
                         {" "}
-                        Nimi: {this.state.profile.name}
+                        Nimi: <br />
+                        {this.state.profile.name}
                       </ListGroupItem>
                       <ListGroupItem>
                         {" "}
-                        Käyttäjätunnus: {this.state.profile.nickname}
+                        Käyttäjätunnus: <br />
+                        {this.state.profile.nickname}
                       </ListGroupItem>
                     </ListGroup>
                   </CardText>
@@ -76,6 +102,19 @@ class ProfileAuth extends Component {
                     <NicknameRides
                       rides={this.state.list}
                       deleteRideFromList={this.deleteRideFromList}
+                      history={this.props.history}
+                      profile={this.state.profile}
+                    />
+                  </div>
+                  <br />
+                  <CardTitle>Olet kyydissä näissä</CardTitle>
+                  <div>
+                    <NicknameRides
+                      rides={this.state.passengerlist}
+                      deleteRideFromList={this.deleteRideFromList}
+                      history={this.props.history}
+                      profile={this.state.profile}
+
                     />
                   </div>
                 </CardBody>

@@ -17,7 +17,8 @@ import NavComponent from "./Navbar";
 import ProfileAuth from "./components/ProfileAuth";
 import RideBox from "./components/RideBox";
 import OfferCreated from "./components/OfferCreated";
-
+import LookingForLocation from "./components/LookingForLocation";
+import MessageBox from "./components/MessageBox";
 class App extends Component {
   force() {
     this.forceUpdate();
@@ -47,11 +48,18 @@ class App extends Component {
                 />
                 <Route
                   exact
+                  path="/messages"
+                  component={MessageBox}
+                  onEnter={requireAuth}
+                />
+                <Route
+                  exact
                   path="/ridesearchpage"
                   component={RideSearchPage}
                 />
                 <Route exact path="/addride" component={AddRide} />
                 <Route path="/callback" component={Callback} />
+                <Route path="/location" component={LookingForLocation} />
                 <Redirect exact from="/" to="/firstpage" />
                 {/* <Route component={NotFound} /> */}
               </Switch>

@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import ProfileList from "./ProfileList";
 import { isLoggedIn } from "./AuthService";
 
-const url = "https://kimppakyytiapi.azurewebsites.net/api/user/GetAllUsers";
+const url = "https://lada.azurewebsites.net/api/user/GetAllUsers";
 
 var data = [
   {
@@ -41,10 +41,10 @@ class AllProfiles extends Component {
             <ProfileList data={this.state.profileList} />
           </div>
         ) : (
-          <div>
-            <h2>Kirjaudu sisään</h2>
-          </div>
-        )}
+            <div>
+              <h2>Kirjaudu sisään</h2>
+            </div>
+          )}
       </div>
     );
   }
